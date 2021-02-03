@@ -1,0 +1,3 @@
+include ':BetterRecyclerView'
+include ':app'
+rootProject.name = "BetterRecyclerView"
