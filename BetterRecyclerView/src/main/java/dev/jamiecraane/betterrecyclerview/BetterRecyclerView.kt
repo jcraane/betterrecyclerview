@@ -52,7 +52,7 @@ betterRecyclerView.itemsAndBuilder = Pair(items, mapOf<Int, () -> View>(
  *
  * @author jcraane
  */
-open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = null) :
+open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? = null) :
     RecyclerView(context, attributeSet) {
     /**
      * Convenience property to directly use a vertical or horizontal LinearLayoutManager.
@@ -66,10 +66,10 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
     /**
      * The adapter for this recyclerview. Can be used to update items directly using the adapter.
      */
-    var betterAdapter: BetterRecyclerAdapter? = null
+    var betterAdapter: BetterRecyclerAdapter<T>? = null
         private set
 
-    var onItemClickListener: OnItemClickListener? = null
+    var onItemClickListener: OnItemClickListener<T>? = null
     var onEndlessScrollingListener: OnEndlessScrolling? = null
     var dragListener: DragListener? = null
     var disableVerticalScrolling = false
@@ -92,7 +92,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
     /**
      * The items to render together with the functions (mapped to viewType) to create the views for the items.
      */
-    var itemsAndBuilder: Pair<MutableList<RecyclerItem>, Map<Int, () -> View>>? = null
+    var itemsAndBuilder: Pair<MutableList<RecyclerItem<T>>, Map<Int, () -> View>>? = null
         set(value) {
             field = value
             itemsAndBuilder?.let {
@@ -118,7 +118,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
      * @param items The items to render
      * @param viewBuilder The function to create the View for the items
      */
-    fun setItems(items: List<RecyclerItem>, viewBuilder: () -> View) {
+    fun setItems(items: List<RecyclerItem<T>>, viewBuilder: () -> View) {
         itemsAndBuilder = Pair(
             items.toMutableList(), mapOf(
                 0 to viewBuilder
@@ -131,7 +131,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
      * the list is changed, the corresponding update methods on the adapter needs to be called, for
      * example notifyItemAdded(position).
      */
-    fun setMutableItems(items: MutableList<RecyclerItem>, viewBuilder: () -> View) {
+    fun setMutableItems(items: MutableList<RecyclerItem<T>>, viewBuilder: () -> View) {
         itemsAndBuilder = Pair(
             items, mapOf(
                 0 to viewBuilder
@@ -139,7 +139,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
         )
     }
 
-    fun addPreviousItems(items: List<RecyclerItem>, done: () -> Unit = {}) {
+    fun addPreviousItems(items: List<RecyclerItem<T>>, done: () -> Unit = {}) {
         items.reversed().forEach {
             betterAdapter?.addItem(it, 0)
         }
@@ -156,19 +156,19 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
         scrollYOffset += dy
     }
 
-    fun addNextItems(items: List<RecyclerItem>, done: () -> Unit = {}) {
+    fun addNextItems(items: List<RecyclerItem<T>>, done: () -> Unit = {}) {
         items.forEach {
             betterAdapter?.addItem(it)
         }
         done()
     }
 
-    fun findFirstCompletelyVisibleItem(condition: (RecyclerItem?) -> Boolean): RecyclerItem? {
+    fun findFirstCompletelyVisibleItem(condition: (RecyclerItem<T>?) -> Boolean): RecyclerItem<T>? {
         val firstPositionIndex = (layoutManager as? LinearLayoutManager)?.findFirstCompletelyVisibleItemPosition() ?: NO_POSITION
         return if (firstPositionIndex == NO_POSITION) {
             null
         } else {
-            var found: RecyclerItem? = null
+            var found: RecyclerItem<T>? = null
             var pos = firstPositionIndex
             if (betterAdapter?.items?.hasItemFor(pos) == true) {
                 found = betterAdapter?.items?.get(pos)
@@ -186,12 +186,12 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
         }
     }
 
-    fun findLastCompletelyVisibleItem(condition: (RecyclerItem?) -> Boolean): RecyclerItem? {
+    fun findLastCompletelyVisibleItem(condition: (RecyclerItem<T>?) -> Boolean): RecyclerItem<T>? {
         val lastPositionIndex = (layoutManager as? LinearLayoutManager)?.findLastCompletelyVisibleItemPosition() ?: NO_POSITION
         return if (lastPositionIndex == NO_POSITION) {
             null
         } else {
-            var found: RecyclerItem? = null
+            var found: RecyclerItem<T>? = null
             var pos = lastPositionIndex
             if (betterAdapter?.items?.hasItemFor(pos) == true) {
                 found = betterAdapter?.items?.get(pos)
@@ -214,8 +214,10 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
      *
      * @param item The item that has changed
      */
-    fun notifyItemChanged(item: RecyclerItem) {
-        adapter?.notifyItemChanged((adapter as BetterRecyclerAdapter).indexOfItem(item))
+    fun notifyItemChanged(item: RecyclerItem<T>) {
+        betterAdapter?.indexOfItem(item)?.let { index ->
+            adapter?.notifyItemChanged(index)
+        }
     }
 
     fun notifyDataSetChanged() {
@@ -227,17 +229,17 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
         val betterView: ItemView = view as ItemView
     }
 
-    class BetterRecyclerAdapter(
-        val items: MutableList<RecyclerItem>,
+    class BetterRecyclerAdapter<T>(
+        val items: MutableList<RecyclerItem<T>>,
         private val viewBuilders: Map<Int, () -> View>,
-        private val onItemClickListener: OnItemClickListener?,
+        private val onItemClickListener: OnItemClickListener<T>?,
         private val onEndlessScrollingListener: OnEndlessScrolling?,
         private val dragListener: DragListener? = null
-    ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem>>>() {
+    ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem<T>>>>() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-        ): BetterViewHolder<ItemView<RecyclerItem>> {
+        ): BetterViewHolder<ItemView<RecyclerItem<T>>> {
             val viewBuilder = viewBuilders[viewType]
             if (viewBuilder != null) {
                 return BetterViewHolder(viewBuilder())
@@ -259,7 +261,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
         /**
          * Returns the index of the Item in the list of Item. -1 if not present.
          */
-        fun indexOfItem(item: RecyclerItem): Int {
+        fun indexOfItem(item: RecyclerItem<T>): Int {
             return items.indexOf(item)
         }
 
@@ -268,7 +270,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
             notifyItemRemoved(position)
         }
 
-        fun removeItem(item: RecyclerItem) {
+        fun removeItem(item: RecyclerItem<T>) {
             val index = items.indexOf(item)
             items.remove(item)
             notifyItemRemoved(index)
@@ -277,13 +279,13 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
         /**
          * Adds the item at the given index. At the end if the index is null
          */
-        fun addItem(item: RecyclerItem, index: Int? = null) {
+        fun addItem(item: RecyclerItem<T>, index: Int? = null) {
             val indexToAdd = index ?: items.size
             items.add(indexToAdd, item)
             notifyItemInserted(indexToAdd)
         }
 
-        fun updateItem(item: RecyclerItem, position: Int) {
+        fun updateItem(item: RecyclerItem<T>, position: Int) {
             items[position] = item
             notifyItemChanged(position)
         }
@@ -313,14 +315,14 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
          * @param position The position of the item to update.
          * @param item The new item to set at position.
          */
-        fun updateItem(position: Int, item: RecyclerItem) {
+        fun updateItem(position: Int, item: RecyclerItem<T>) {
             if (items.hasItemFor(position)) {
                 items[position] = item
                 notifyItemChanged(position)
             }
         }
 
-        override fun onBindViewHolder(vh: BetterViewHolder<ItemView<RecyclerItem>>, position: Int) {
+        override fun onBindViewHolder(vh: BetterViewHolder<ItemView<RecyclerItem<T>>>, position: Int) {
             val item = items[position]
             onItemClickListener?.let { listener ->
                 (vh.betterView as View).setOnClickListener {
@@ -343,7 +345,7 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
             vh.betterView.update(item, position)
         }
 
-        override fun onViewDetachedFromWindow(holder: BetterViewHolder<ItemView<RecyclerItem>>) {
+        override fun onViewDetachedFromWindow(holder: BetterViewHolder<ItemView<RecyclerItem<T>>>) {
             super.onViewDetachedFromWindow(holder)
             holder.betterView.onDetached()
         }
@@ -372,8 +374,8 @@ open class BetterRecyclerView(context: Context, attributeSet: AttributeSet? = nu
      * (Optional) Simple interface to implement a simple click for an entire item. To implement click, or other
      * listeners on components within an item implement them in de update method of the ItemView.
      */
-    interface OnItemClickListener {
-        fun onItemClicked(item: RecyclerItem, view: View)
+    interface OnItemClickListener<T> {
+        fun onItemClicked(item: RecyclerItem<T>, view: View)
     }
 
     interface OnEndlessScrolling {

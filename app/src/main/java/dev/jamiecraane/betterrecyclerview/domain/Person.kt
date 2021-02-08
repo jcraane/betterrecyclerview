@@ -5,4 +5,6 @@ import nl.capaxambi.shared.common.RecyclerItem
 data class Person(
     val firstName: String,
     val lastName: String
-) : RecyclerItem
+) : RecyclerItem<Person> {
+    override fun getData() = this
+}

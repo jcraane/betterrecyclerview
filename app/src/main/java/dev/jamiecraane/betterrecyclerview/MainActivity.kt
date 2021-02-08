@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) : BetterRecyclerView(context, attributeSet) {
+class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) : BetterRecyclerView<Person>(context, attributeSet) {
     var persons: List<Person> = emptyList()
         set(value) {
             field = value
