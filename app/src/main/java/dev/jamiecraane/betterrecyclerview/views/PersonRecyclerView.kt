@@ -3,12 +3,14 @@ package dev.jamiecraane.betterrecyclerview.views
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import dev.jamiecraane.betterrecyclerview.DragCallback
 import dev.jamiecraane.betterrecyclerview.databinding.ViewPersonsBinding
 import dev.jamiecraane.betterrecyclerview.domain.Person
 import nl.capaxambi.wordtranslator.androidapp.components.BetterRecyclerView
+import nl.capaxambi.wordtranslator.androidapp.components.DragAndDropConfig
 import nl.capaxambi.wordtranslator.androidapp.components.DragListener
 
 class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) : BetterRecyclerView<Person>(context, attributeSet) {
@@ -22,6 +24,7 @@ class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) :
         val callback = DragCallback(this)
         val touchHelper = ItemTouchHelper(callback)
         dragListener = DragListener(touchHelper)
+        dragAndDropConfig = DragAndDropConfig(dragUsingDragHandle = true, dragUsingLongPress = false)
         touchHelper.attachToRecyclerView(this)
     }
 }
@@ -42,4 +45,6 @@ class PersonView(context: Context, attributeSet: AttributeSet? = null) : LinearL
         binding.firstName.text = item.firstName
         binding.lastName.text = item.lastName
     }
+
+    override fun getDragHandle() = binding.dragHandle
 }

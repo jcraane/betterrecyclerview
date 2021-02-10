@@ -4,16 +4,27 @@
     android:orientation="horizontal"
     tools:parentTag="android.widget.LinearLayout">
 
+    <ImageView
+        android:id="@+id/dragHandle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_baseline_drag_handle_24" />
+
     <TextView
         android:id="@+id/firstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"
         tools:text="first" />
 
     <TextView
         android:id="@+id/lastName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         tools:text="last" />
 
 </merge>
