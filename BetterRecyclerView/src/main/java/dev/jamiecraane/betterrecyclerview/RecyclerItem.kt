@@ -6,6 +6,7 @@ package nl.capaxambi.shared.common
  */
 interface RecyclerItem<T> {
     val data: T
+
     /**
      * The item type which is used to determine the viewType. Defaults to 0.
      */

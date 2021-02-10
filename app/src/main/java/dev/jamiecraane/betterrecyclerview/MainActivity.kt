@@ -11,6 +11,9 @@ import androidx.activity.viewModels
 import dev.jamiecraane.betterrecyclerview.databinding.ActivityMainBinding
 import dev.jamiecraane.betterrecyclerview.databinding.ViewPersonsBinding
 import dev.jamiecraane.betterrecyclerview.domain.Person
+import dev.jamiecraane.betterrecyclerview.model.PersonModel
+import dev.jamiecraane.betterrecyclerview.views.HeaderView
+import dev.jamiecraane.betterrecyclerview.views.PersonView
 import nl.capaxambi.wordtranslator.androidapp.components.BetterRecyclerView
 
 class MainActivity : AppCompatActivity() {
@@ -21,15 +24,19 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+//        todo use builder function here.
         viewModel.persons.observe(this) {
-            binding.personsRecyclerView.persons = it
+            binding.personsRecyclerView.itemsAndBuilder = it to mapOf(
+                PersonModel.REGULAR_ITEM to { PersonView(this) },
+                PersonModel.HEADER_ITEM to { HeaderView(this) }
+            )
+//            binding.personsRecyclerView.persons = it
         }
 
         binding.personsRecyclerView.onItemClickListener = { recyclerItem, view ->
-            Toast.makeText(this, "Clicked on ${recyclerItem.data.firstName}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Clicked on ${recyclerItem.data.name}", Toast.LENGTH_SHORT).show()
         }
 
-//        todo add drag&drop
 //        todo add endless scrolling
 //        todo add multiple views
     }
