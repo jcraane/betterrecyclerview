@@ -18,12 +18,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel.persons.observe(this) {
+
             binding.personsRecyclerView.configure(it) {
                 addMapping(PersonModel.REGULAR_ITEM to { PersonView(this@MainActivity) })
                 addMapping(PersonModel.HEADER_ITEM to { HeaderView(this@MainActivity) })
             }
 
-//            binding.personsRecyclerView.persons = it
         }
 
         binding.personsRecyclerView.onItemClickListener = { recyclerItem, view ->
