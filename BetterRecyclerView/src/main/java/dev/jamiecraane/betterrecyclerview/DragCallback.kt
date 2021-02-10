@@ -28,7 +28,7 @@ class DragCallback<T>(
         return makeMovementFlags(dragFlags, 0)
     }
 
-    override fun isLongPressDragEnabled() = betterRecyclerView.dragAndDropConfig.dragUsingLongPress
+    override fun isLongPressDragEnabled() = betterRecyclerView.dragAndDropConfig?.dragUsingLongPress == true
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         betterRecyclerView.betterAdapter?.onMoved(viewHolder.adapterPosition, target.adapterPosition)

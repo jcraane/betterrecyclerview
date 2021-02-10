@@ -75,8 +75,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
 
     var onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null
     var onEndlessScrollingListener: OnEndlessScrolling? = null
-    var dragListener: DragListener? = null
-    var dragAndDropConfig = DragAndDropConfig()
+    var dragAndDropConfig: DragAndDropConfig? = null
     var disableVerticalScrolling = false
 
     var scrollXOffset: Int = 0
@@ -108,7 +107,6 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                         it.second,
                         onItemClickListener,
                         onEndlessScrollingListener,
-                        dragListener,
                         dragAndDropConfig
                     )
                 adapter = betterAdapter
@@ -241,8 +239,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         private val viewBuilders: Map<Int, () -> View>,
         private val onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null,
         private val onEndlessScrollingListener: OnEndlessScrolling?,
-        private val dragListener: DragListener? = null,
-        private val dragAndDropConfig: DragAndDropConfig
+        private val dragAndDropConfig: DragAndDropConfig? = null
     ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem<T>>>>() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
@@ -342,10 +339,10 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
             } else if (position == items.size - 1) {
                 onEndlessScrollingListener?.onLoadEnd()
             }
-            if (dragAndDropConfig.dragUsingDragHandle) {
+            if (dragAndDropConfig?.dragUsingDragHandle == true) {
                 vh.betterView.getDragHandle()?.setOnTouchListener { view, motionEvent ->
                     if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                        dragListener?.requestDrag(vh)
+                        dragAndDropConfig?.dragListener?.requestDrag(vh)
                     }
                     false
                 }
