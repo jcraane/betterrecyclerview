@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <dev.jamiecraane.betterrecyclerview.PersonRecyclerView
+    <dev.jamiecraane.betterrecyclerview.views.PersonRecyclerView
         android:id="@+id/personsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

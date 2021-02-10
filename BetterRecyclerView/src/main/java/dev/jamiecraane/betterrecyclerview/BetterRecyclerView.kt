@@ -93,6 +93,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         }
     }
 
+//    todo see if we can rewrite this in a more convenient fashion
     /**
      * The items to render together with the functions (mapped to viewType) to create the views for the items.
      */
