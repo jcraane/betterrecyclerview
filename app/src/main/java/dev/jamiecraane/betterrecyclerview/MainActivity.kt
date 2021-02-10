@@ -31,6 +31,5 @@ class MainActivity : AppCompatActivity() {
         }
 
 //        todo add endless scrolling
-//        todo add multiple views
     }
 }
