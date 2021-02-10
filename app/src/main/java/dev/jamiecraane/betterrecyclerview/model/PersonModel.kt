@@ -1,6 +1,6 @@
 package dev.jamiecraane.betterrecyclerview.model
 
-import nl.capaxambi.shared.common.RecyclerItem
+import dev.jamiecraane.betterrecyclerview.RecyclerItem
 
 class PersonModel(
     val name: String,

@@ -1,4 +1,4 @@
-package nl.capaxambi.wordtranslator.androidapp.components
+package dev.jamiecraane.betterrecyclerview
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dev.jamiecraane.betterrecyclerview.DragCallback
 import dev.jamiecraane.betterrecyclerview.extensions.hasItemFor
-import nl.capaxambi.shared.common.RecyclerItem
+import nl.capaxambi.wordtranslator.androidapp.components.DragAndDropConfig
+import nl.capaxambi.wordtranslator.androidapp.components.DragListener
 import java.util.*
 
 
@@ -407,6 +407,8 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
          * If getDragCaonfig.dragUsingDragHandle is true, this view (if not null) is used to start drag the item.
          */
         fun getDragHandle(): View? = null
+
+        fun isDraggable(): Boolean = false
     }
 
     interface OnEndlessScrolling {
@@ -414,4 +416,17 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
 
         fun onLoadEnd()
     }
+
+    class BetterRecyclerViewConfig<T>(val items: List<RecyclerItem<T>>) {
+        val viewBuilders = mutableMapOf<Int, () -> View>()
+
+        fun addMapping(mapping: Pair<Int, () -> View>) {
+            viewBuilders[mapping.first] = mapping.second
+        }
+    }
+}
+
+fun <T> BetterRecyclerView<T>.configure(items: List<RecyclerItem<T>>, block: BetterRecyclerView.BetterRecyclerViewConfig<T>.() -> Unit) {
+    val config = BetterRecyclerView.BetterRecyclerViewConfig<T>(items).apply(block)
+    itemsAndBuilder = config.items to config.viewBuilders
 }

@@ -4,17 +4,12 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
-import androidx.recyclerview.widget.ItemTouchHelper
-import dev.jamiecraane.betterrecyclerview.DragCallback
 import dev.jamiecraane.betterrecyclerview.databinding.ViewHeaderBinding
 import dev.jamiecraane.betterrecyclerview.databinding.ViewPersonsBinding
-import dev.jamiecraane.betterrecyclerview.domain.Person
 import dev.jamiecraane.betterrecyclerview.model.PersonModel
-import nl.capaxambi.wordtranslator.androidapp.components.BetterRecyclerView
+import dev.jamiecraane.betterrecyclerview.BetterRecyclerView
 import nl.capaxambi.wordtranslator.androidapp.components.DragAndDropConfig
-import nl.capaxambi.wordtranslator.androidapp.components.DragListener
 
 class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) : BetterRecyclerView<PersonModel>(context, attributeSet) {
     var persons: List<PersonModel> = emptyList()
@@ -47,6 +42,8 @@ class PersonView(context: Context, attributeSet: AttributeSet? = null) : LinearL
     }
 
     override fun getDragHandle() = binding.dragHandle
+
+    override fun isDraggable() = true
 }
 
 class HeaderView(context: Context, attributeSet: AttributeSet? = null) : LinearLayout(context, attributeSet),
@@ -60,4 +57,6 @@ class HeaderView(context: Context, attributeSet: AttributeSet? = null) : LinearL
     override fun update(item: PersonModel, position: Int) {
         binding.name.text = item.name
     }
+
+    override fun isDraggable() = false
 }

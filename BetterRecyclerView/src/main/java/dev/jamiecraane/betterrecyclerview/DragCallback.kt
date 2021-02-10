@@ -2,7 +2,6 @@ package dev.jamiecraane.betterrecyclerview
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import nl.capaxambi.wordtranslator.androidapp.components.BetterRecyclerView
 
 /**
  * Generic drag call back to handle drag and drop in the BetterRecyclerView.
@@ -15,7 +14,8 @@ class DragCallback<T>(
     private val movementFlags: Set<Int> = setOf(ItemTouchHelper.UP, ItemTouchHelper.DOWN)
 ) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-        val dragFlags = if (movementFlags.isEmpty()) {
+        val notDraggable = (viewHolder.itemView as? BetterRecyclerView.ItemView<*>)?.isDraggable() == false
+        val dragFlags = if (movementFlags.isEmpty() || notDraggable) {
             0
         } else {
             var flags = movementFlags.first()

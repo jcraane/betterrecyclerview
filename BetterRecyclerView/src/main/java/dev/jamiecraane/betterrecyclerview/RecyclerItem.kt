@@ -1,4 +1,4 @@
-package nl.capaxambi.shared.common
+package dev.jamiecraane.betterrecyclerview
 
 
 /**

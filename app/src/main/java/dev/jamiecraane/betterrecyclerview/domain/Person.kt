@@ -1,6 +1,6 @@
 package dev.jamiecraane.betterrecyclerview.domain
 
-import nl.capaxambi.shared.common.RecyclerItem
+import dev.jamiecraane.betterrecyclerview.RecyclerItem
 
 data class Person(
     val firstName: String,
