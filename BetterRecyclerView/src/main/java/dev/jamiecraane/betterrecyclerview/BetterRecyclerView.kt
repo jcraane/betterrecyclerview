@@ -36,18 +36,24 @@ import java.util.*
  * viewholder classes. This class simply accepts one or more functions responsible for creating te views. Items of the recyclerview
  * must implement the Item interface and Views which are used in this recycler view must implement the ItemView<Item> interface.
  *
- * For every itemViewType there must be a corresponding function to create the view for this item type.
+ * For every itemViewType there must be a corresponding function to create the view for this item type. A convenience configure
+ * function exists for configuring the list of items and corresponding view mappings.
  *
  * Example:
  *
  * '''
-betterRecyclerView.itemsAndBuilder = Pair(items, mapOf<Int, () -> View>(
-0 to {PersonView(this)},
-1 to {HeaderView(this)}
-))
+betterRecyclerView..configure(persons) {
+    addMapping(PersonModel.REGULAR_ITEM to { PersonView(this@MainActivity) })
+    addMapping(PersonModel.HEADER_ITEM to { HeaderView(this@MainActivity) })
+}
  * '''
  *
  * where persons is a list of Item objects.
+ *
+ * If only one type of view is required, setting the items and view builder using the setItems function is enough:
+ * betterRecyclerView.setItems(persons) {
+ *      0 to { PersonView(this@MainActivity) }
+ * }
  *
  * By default this class creates a LinearLayoutManager where its orientation is specified using the orientation
  * property. You can soecify a custom layout manager directly if desired.
@@ -156,7 +162,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     }
 
     /**
-     * Convenient function which can be used if this recyvlerview only supports one view type.
+     * Convenient function which can be used if this recyclerview only supports one view type.
      *
      * @param items The items to render
      * @param viewBuilder The function to create the View for the items
