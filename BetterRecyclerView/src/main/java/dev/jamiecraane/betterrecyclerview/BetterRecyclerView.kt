@@ -50,6 +50,10 @@ betterRecyclerView.itemsAndBuilder = Pair(items, mapOf<Int, () -> View>(
  * By default this class creates a LinearLayoutManager where its orientation is specified using the orientation
  * property. You can soecify a custom layout manager directly if desired.
  *
+ * This class is type safe, that is, the type of the items in the adapter is represented by type T. In order for
+ * this to work in XML, a subclass must be defined with a concrete type. In XML it is not possible to specify this type
+ * parameter.
+ *
  * @author jcraane
  */
 open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? = null) :
@@ -69,7 +73,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     var betterAdapter: BetterRecyclerAdapter<T>? = null
         private set
 
-    var onItemClickListener: OnItemClickListener<T>? = null
+    var onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null
     var onEndlessScrollingListener: OnEndlessScrolling? = null
     var dragListener: DragListener? = null
     var disableVerticalScrolling = false
@@ -232,7 +236,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     class BetterRecyclerAdapter<T>(
         val items: MutableList<RecyclerItem<T>>,
         private val viewBuilders: Map<Int, () -> View>,
-        private val onItemClickListener: OnItemClickListener<T>?,
+        private val onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null,
         private val onEndlessScrollingListener: OnEndlessScrolling?,
         private val dragListener: DragListener? = null
     ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem<T>>>>() {
@@ -326,7 +330,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
             val item = items[position]
             onItemClickListener?.let { listener ->
                 (vh.betterView as View).setOnClickListener {
-                    listener.onItemClicked(item, vh.betterView)
+                    listener.invoke(item, vh.betterView)
                 }
             }
             if (position == 0) {
@@ -368,14 +372,6 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         fun getDragHandle(): View? = null
 
         fun getDragConfig() = DragAndDropConfig()
-    }
-
-    /**
-     * (Optional) Simple interface to implement a simple click for an entire item. To implement click, or other
-     * listeners on components within an item implement them in de update method of the ItemView.
-     */
-    interface OnItemClickListener<T> {
-        fun onItemClicked(item: RecyclerItem<T>, view: View)
     }
 
     interface OnEndlessScrolling {

@@ -6,5 +6,6 @@ data class Person(
     val firstName: String,
     val lastName: String
 ) : RecyclerItem<Person> {
-    override fun getData() = this
+    override val data: Person
+        get() = this
 }
