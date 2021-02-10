@@ -1,6 +1,7 @@
 package dev.jamiecraane.betterrecyclerview.views
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -17,6 +18,7 @@ class PersonView(context: Context, attributeSet: AttributeSet? = null) : LinearL
         orientation = HORIZONTAL
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         setPadding(16, 16, 16, 16)
+        setBackgroundColor(Color.LTGRAY)
     }
 
     override fun update(item: PersonModel, position: Int) {
