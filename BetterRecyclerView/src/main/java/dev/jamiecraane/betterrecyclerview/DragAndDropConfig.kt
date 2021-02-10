@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
  * @param dragUsingLongPress If true, dragging is enabled by long pressing the ItemView.
  */
 data class DragAndDropConfig(
-    val dragListener: DragListener,
     val dragUsingDragHandle: Boolean = false,
     val dragUsingLongPress: Boolean = false)
 

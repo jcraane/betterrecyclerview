@@ -5,8 +5,10 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dev.jamiecraane.betterrecyclerview.DragCallback
 import dev.jamiecraane.betterrecyclerview.extensions.hasItemFor
 import nl.capaxambi.shared.common.RecyclerItem
 import java.util.*
@@ -75,7 +77,24 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
 
     var onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null
     var onEndlessScrollingListener: OnEndlessScrolling? = null
+    private var dragCallback: DragCallback<T>? = null
+    private var itemTouchHelper: ItemTouchHelper? = null
+    private var dragListener: DragListener? = null
     var dragAndDropConfig: DragAndDropConfig? = null
+        set(value) {
+            field = value
+            val f = field
+            if (f != null) {
+                val dcb = DragCallback(this)
+                dragCallback = dcb
+                itemTouchHelper = ItemTouchHelper(dcb).also {
+                    dragListener = DragListener(it)
+                    it.attachToRecyclerView(this)
+                }
+            } else {
+                itemTouchHelper?.attachToRecyclerView(null)
+            }
+        }
     var disableVerticalScrolling = false
 
     var scrollXOffset: Int = 0
@@ -107,7 +126,8 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                         it.second,
                         onItemClickListener,
                         onEndlessScrollingListener,
-                        dragAndDropConfig
+                        dragAndDropConfig,
+                        dragListener
                     )
                 adapter = betterAdapter
             }
@@ -239,7 +259,8 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         private val viewBuilders: Map<Int, () -> View>,
         private val onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null,
         private val onEndlessScrollingListener: OnEndlessScrolling?,
-        private val dragAndDropConfig: DragAndDropConfig? = null
+        private val dragAndDropConfig: DragAndDropConfig? = null,
+        private val dragListener: DragListener?
     ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem<T>>>>() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
@@ -342,7 +363,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
             if (dragAndDropConfig?.dragUsingDragHandle == true) {
                 vh.betterView.getDragHandle()?.setOnTouchListener { view, motionEvent ->
                     if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                        dragAndDropConfig?.dragListener?.requestDrag(vh)
+                        dragListener?.requestDrag(vh)
                     }
                     false
                 }

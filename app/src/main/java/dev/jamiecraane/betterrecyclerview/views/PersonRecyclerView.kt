@@ -21,14 +21,10 @@ class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
     init {
-        val callback = DragCallback(this)
-        val touchHelper = ItemTouchHelper(callback)
         dragAndDropConfig = DragAndDropConfig(
-            dragListener = DragListener(touchHelper),
             dragUsingDragHandle = true,
             dragUsingLongPress = true
         )
-        touchHelper.attachToRecyclerView(this)
     }
 }
 
