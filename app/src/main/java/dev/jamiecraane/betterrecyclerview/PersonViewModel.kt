@@ -13,10 +13,19 @@ class PersonViewModel : ViewModel() {
 
     val persons = MutableLiveData<List<PersonModel>>()
 
+    val nextItems = MutableLiveData<List<PersonModel>>()
+
     init {
         viewModelScope.launch {
             val items = listOf(PersonModel("All Persons", true))
             persons.value = items + api.loadInitial().map {PersonModel("${it.firstName} - ${it.lastName}")}
         }
+    }
+
+    fun loadMoreData() {
+        viewModelScope.launch {
+            nextItems.value = api.loadInitial().map {PersonModel("${it.firstName} - ${it.lastName}")}
+        }
+
     }
 }

@@ -26,10 +26,16 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        viewModel.nextItems.observe(this) {
+            binding.personsRecyclerView.addNextItems(it)
+        }
+
         binding.personsRecyclerView.onItemClickListener = { recyclerItem, view ->
             Toast.makeText(this, "Clicked on ${recyclerItem.data.name}", Toast.LENGTH_SHORT).show()
         }
 
-//        todo add endless scrolling
+        binding.personsRecyclerView.onScrollEndReached = {
+            viewModel.loadMoreData()
+        }
     }
 }

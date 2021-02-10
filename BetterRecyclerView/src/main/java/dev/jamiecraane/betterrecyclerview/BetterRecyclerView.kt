@@ -83,7 +83,9 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     /**
      * Callback which, for example, can be used to load more data when the start or end of the recyclerview is reached.
      */
-    var onEndlessScrollingListener: OnEndlessScrolling? = null
+//    var onEndlessScrollingListener: OnEndlessScrolling? = null
+    var onScrollStartReached: (() -> Unit)? = null
+    var onScrollEndReached: (() -> Unit)? = null
     private var dragCallback: DragCallback<T>? = null
     private var itemTouchHelper: ItemTouchHelper? = null
     private var dragListener: DragListener? = null
@@ -140,7 +142,8 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                         it.first.toMutableList(),
                         it.second,
                         onItemClickListener,
-                        onEndlessScrollingListener,
+                        onScrollStartReached,
+                        onScrollEndReached,
                         dragAndDropConfig,
                         dragListener
                     )
@@ -180,10 +183,12 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     }
 
     fun addPreviousItems(items: List<RecyclerItem<T>>, done: () -> Unit = {}) {
-        items.reversed().forEach {
-            betterAdapter?.addItem(it, 0)
+        post {
+            items.reversed().forEach {
+                betterAdapter?.addItem(it, 0)
+            }
+            done()
         }
-        done()
     }
 
     fun resetScrollOffsets() {
@@ -197,10 +202,12 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     }
 
     fun addNextItems(items: List<RecyclerItem<T>>, done: () -> Unit = {}) {
-        items.forEach {
-            betterAdapter?.addItem(it)
+        post {
+            items.forEach {
+                betterAdapter?.addItem(it)
+            }
+            done()
         }
-        done()
     }
 
     fun findFirstCompletelyVisibleItem(condition: (RecyclerItem<T>?) -> Boolean): RecyclerItem<T>? {
@@ -273,7 +280,8 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         val items: MutableList<RecyclerItem<T>>,
         private val viewBuilders: Map<Int, () -> View>,
         private val onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null,
-        private val onEndlessScrollingListener: OnEndlessScrolling?,
+        private var onScrollStartReached: (() -> Unit)?,
+        private var onScrollEndReached: (() -> Unit)?,
         private val dragAndDropConfig: DragAndDropConfig? = null,
         private val dragListener: DragListener?
     ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem<T>>>>() {
@@ -371,9 +379,9 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                 }
             }
             if (position == 0) {
-                onEndlessScrollingListener?.onLoadStart()
+                onScrollStartReached?.invoke()
             } else if (position == items.size - 1) {
-                onEndlessScrollingListener?.onLoadEnd()
+                onScrollEndReached?.invoke()
             }
             if (dragAndDropConfig?.dragUsingDragHandle == true) {
                 vh.betterView.getDragHandle()?.setOnTouchListener { _, motionEvent ->
