@@ -435,6 +435,6 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
 }
 
 fun <T> BetterRecyclerView<T>.configure(items: List<RecyclerItem<T>>, block: BetterRecyclerView.BetterRecyclerViewConfig<T>.() -> Unit) {
-    val config = BetterRecyclerView.BetterRecyclerViewConfig<T>(items).apply(block)
+    val config = BetterRecyclerView.BetterRecyclerViewConfig(items).apply(block)
     itemsAndBuilder = config.items to config.viewBuilders
 }
