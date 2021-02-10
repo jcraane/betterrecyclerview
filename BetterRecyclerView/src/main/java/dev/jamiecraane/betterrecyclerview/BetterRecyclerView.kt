@@ -75,11 +75,22 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     var betterAdapter: BetterRecyclerAdapter<T>? = null
         private set
 
+    /**
+     * Called when an item is clicked.
+     */
     var onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null
+
+    /**
+     * Callback which, for example, can be used to load more data when the start or end of the recyclerview is reached.
+     */
     var onEndlessScrollingListener: OnEndlessScrolling? = null
     private var dragCallback: DragCallback<T>? = null
     private var itemTouchHelper: ItemTouchHelper? = null
     private var dragListener: DragListener? = null
+
+    /**
+     * Defines if this recycler view supports drag and drop.
+     */
     var dragAndDropConfig: DragAndDropConfig? = null
         set(value) {
             field = value
@@ -95,6 +106,10 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                 itemTouchHelper?.attachToRecyclerView(null)
             }
         }
+
+    /**
+     * Set to true to disable vertical scrolling.
+     */
     var disableVerticalScrolling = false
 
     var scrollXOffset: Int = 0
@@ -361,7 +376,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                 onEndlessScrollingListener?.onLoadEnd()
             }
             if (dragAndDropConfig?.dragUsingDragHandle == true) {
-                vh.betterView.getDragHandle()?.setOnTouchListener { view, motionEvent ->
+                vh.betterView.getDragHandle()?.setOnTouchListener { _, motionEvent ->
                     if (motionEvent.action == MotionEvent.ACTION_DOWN) {
                         dragListener?.requestDrag(vh)
                     }
