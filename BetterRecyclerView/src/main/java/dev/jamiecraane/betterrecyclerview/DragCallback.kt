@@ -1,17 +1,17 @@
-package nl.capaxambi.wordtranslator.androidapp.editwordlist
+package dev.jamiecraane.betterrecyclerview
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import dev.jamiecraane.betterrecyclerview.views.PersonRecyclerView
+import nl.capaxambi.wordtranslator.androidapp.components.BetterRecyclerView
 
-class PersonsDragCallback(private val personRecyclerView: PersonRecyclerView) : ItemTouchHelper.Callback() {
+class DragCallback<T>(private val betterRecyclerView: BetterRecyclerView<T>) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
         return makeMovementFlags(dragFlags, 0)
     }
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-        personRecyclerView.betterAdapter?.onMoved(viewHolder.adapterPosition, target.adapterPosition)
+        betterRecyclerView.betterAdapter?.onMoved(viewHolder.adapterPosition, target.adapterPosition)
         return true
     }
 
@@ -21,6 +21,6 @@ class PersonsDragCallback(private val personRecyclerView: PersonRecyclerView) : 
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        personRecyclerView.betterAdapter?.notifyDataSetChanged()
+        betterRecyclerView.betterAdapter?.notifyDataSetChanged()
     }
 }

@@ -4,9 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.ItemTouchHelper
+import dev.jamiecraane.betterrecyclerview.DragCallback
 import dev.jamiecraane.betterrecyclerview.databinding.ViewPersonsBinding
 import dev.jamiecraane.betterrecyclerview.domain.Person
 import nl.capaxambi.wordtranslator.androidapp.components.BetterRecyclerView
+import nl.capaxambi.wordtranslator.androidapp.components.DragListener
 
 class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) : BetterRecyclerView<Person>(context, attributeSet) {
     var persons: List<Person> = emptyList()
@@ -14,6 +17,13 @@ class PersonRecyclerView(context: Context, attributeSet: AttributeSet? = null) :
             field = value
             setItems(persons) { PersonView(context) }
         }
+
+    init {
+        val callback = DragCallback(this)
+        val touchHelper = ItemTouchHelper(callback)
+        dragListener = DragListener(touchHelper)
+        touchHelper.attachToRecyclerView(this)
+    }
 }
 
 
