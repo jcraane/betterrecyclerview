@@ -423,6 +423,12 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         fun getDragHandle(): View? = null
 
         fun isDraggable(): Boolean = false
+
+        /**
+         * The DragCallback has default movement flags (which direction a view can be dragged to). With this method views can customize
+         * the direction in which a view can be dragged on a pre-view basis. If empty the movement flags of DragCallback are used.
+         */
+        fun getMovementFlags(): Set<Int> = emptySet()
     }
 
     interface OnEndlessScrolling {

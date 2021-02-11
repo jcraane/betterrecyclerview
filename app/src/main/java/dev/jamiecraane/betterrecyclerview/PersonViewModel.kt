@@ -26,6 +26,5 @@ class PersonViewModel : ViewModel() {
         viewModelScope.launch {
             nextItems.value = api.loadInitial().map {PersonModel("${it.firstName} - ${it.lastName}")}
         }
-
     }
 }

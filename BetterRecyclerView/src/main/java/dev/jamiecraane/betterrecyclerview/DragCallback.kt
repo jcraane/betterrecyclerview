@@ -7,14 +7,20 @@ import androidx.recyclerview.widget.RecyclerView
  * Generic drag call back to handle drag and drop in the BetterRecyclerView.
  *
  * @property betterRecyclerView Reference to betterRecyclerview to let the view know about drag&drop operations.
- * @property movementFlags Defines which directions are supported when dragging. Defaults to UP and DOWN.
+ * @property movementFlags Defines which directions are supported when dragging. Defaults to UP and DOWN. Please note
+ * that the movement flags can be overriden on a per ItemView basis. The movementFlags of the ItemView gets precedence if
+ * they are specified.
  */
 class DragCallback<T>(
     private val betterRecyclerView: BetterRecyclerView<T>,
     private val movementFlags: Set<Int> = setOf(ItemTouchHelper.UP, ItemTouchHelper.DOWN)
 ) : ItemTouchHelper.Callback() {
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-        val notDraggable = (viewHolder.itemView as? BetterRecyclerView.ItemView<*>)?.isDraggable() == false
+        val itemView = viewHolder.itemView as? BetterRecyclerView.ItemView<*>
+        val notDraggable = itemView?.isDraggable() == false
+        val viewMovementFlags = itemView?.getMovementFlags() ?: emptySet()
+
+//        todo use view movement flags.
         val dragFlags = if (movementFlags.isEmpty() || notDraggable) {
             0
         } else {
