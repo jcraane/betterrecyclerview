@@ -17,9 +17,9 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.persons.observe(this) {
+        viewModel.persons.observe(this) { persons ->
 
-            binding.personsRecyclerView.configure(it) {
+            binding.personsRecyclerView.configure(persons) {
                 addMapping(PersonModel.REGULAR_ITEM to { PersonView(this@MainActivity) })
                 addMapping(PersonModel.HEADER_ITEM to { HeaderView(this@MainActivity) })
             }

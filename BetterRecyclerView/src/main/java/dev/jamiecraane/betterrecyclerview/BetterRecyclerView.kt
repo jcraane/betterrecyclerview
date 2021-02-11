@@ -139,7 +139,7 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     /**
      * The items to render together with the functions (mapped to viewType) to create the views for the items.
      */
-    var itemsAndBuilder: Pair<List<RecyclerItem<T>>, Map<Int, () -> View>>? = null
+    internal var itemsAndBuilder: Pair<List<RecyclerItem<T>>, Map<Int, () -> View>>? = null
         set(value) {
             field = value
             itemsAndBuilder?.let {
