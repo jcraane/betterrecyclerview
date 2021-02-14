@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,8 +44,8 @@ import java.util.*
  *
  * '''
 betterRecyclerView..configure(persons) {
-    addMapping(PersonModel.REGULAR_ITEM to { PersonView(this@MainActivity) })
-    addMapping(PersonModel.HEADER_ITEM to { HeaderView(this@MainActivity) })
+addMapping(PersonModel.REGULAR_ITEM to { PersonView(this@MainActivity) })
+addMapping(PersonModel.HEADER_ITEM to { HeaderView(this@MainActivity) })
 }
  * '''
  *
@@ -173,6 +174,28 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                 0 to viewBuilder
             )
         )
+    }
+
+    /**
+     * Update the items in the adapter using DiffUtil based on the functions areItemsSame and areContentsSame.
+     */
+    fun updateData(
+        newList: List<RecyclerItem<T>>,
+        areItemsSame: (oldItem: RecyclerItem<T>, newItem: RecyclerItem<T>) -> Boolean = { old, new ->
+            old == new
+        },
+        areContentsSame: (oldItem: RecyclerItem<T>, newItem: RecyclerItem<T>) -> Boolean = { old, new ->
+            old == new
+        }
+    ) {
+
+        betterAdapter?.let { adapter ->
+            val oldList = adapter.items
+            val diffResult = DiffUtil.calculateDiff(DefaultDiffUtilCallback(oldList, newList, areItemsSame, areContentsSame))
+            oldList.clear()
+            oldList.addAll(newList)
+            diffResult.dispatchUpdatesTo(adapter)
+        }
     }
 
     /**
