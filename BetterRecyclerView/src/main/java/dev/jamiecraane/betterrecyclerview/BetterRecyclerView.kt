@@ -204,11 +204,19 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
      * example notifyItemAdded(position).
      */
     fun setMutableItems(items: MutableList<RecyclerItem<T>>, viewBuilder: () -> View) {
-        itemsAndBuilder = Pair(
-            items, mapOf(
-                0 to viewBuilder
+        betterAdapter =
+            BetterRecyclerAdapter(
+                items,
+                mapOf(
+                    0 to viewBuilder
+                ),
+                onItemClickListener,
+                onScrollStartReached,
+                onScrollEndReached,
+                dragAndDropConfig,
+                dragListener
             )
-        )
+        adapter = betterAdapter
     }
 
     fun addPreviousItems(items: List<RecyclerItem<T>>, done: () -> Unit = {}) {
