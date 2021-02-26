@@ -86,6 +86,10 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
      * Called when an item is clicked.
      */
     var onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null
+        set(value) {
+            field = value
+            betterAdapter?.onItemClickListener = field
+        }
 
     /**
      * Callback which, for example, can be used to load more data when the start or end of the recyclerview is reached.
@@ -136,7 +140,6 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
         }
     }
 
-//    todo see if we can rewrite this in a more convenient fashion
     /**
      * The items to render together with the functions (mapped to viewType) to create the views for the items.
      */
@@ -148,12 +151,13 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                     BetterRecyclerAdapter(
                         it.first.toMutableList(),
                         it.second,
-                        onItemClickListener,
                         onScrollStartReached,
                         onScrollEndReached,
                         dragAndDropConfig,
                         dragListener
-                    )
+                    ).apply {
+                        onItemClickListener = this@BetterRecyclerView.onItemClickListener
+                    }
                 adapter = betterAdapter
             }
         }
@@ -210,12 +214,13 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
                 mapOf(
                     0 to viewBuilder
                 ),
-                onItemClickListener,
                 onScrollStartReached,
                 onScrollEndReached,
                 dragAndDropConfig,
                 dragListener
-            )
+            ).apply {
+                onItemClickListener = this@BetterRecyclerView.onItemClickListener
+            }
         adapter = betterAdapter
     }
 
@@ -316,12 +321,13 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     class BetterRecyclerAdapter<T>(
         val items: MutableList<RecyclerItem<T>>,
         private val viewBuilders: Map<Int, () -> View>,
-        private val onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null,
         private var onScrollStartReached: (() -> Unit)?,
         private var onScrollEndReached: (() -> Unit)?,
         private val dragAndDropConfig: DragAndDropConfig? = null,
         private val dragListener: DragListener?
     ) : RecyclerView.Adapter<BetterViewHolder<ItemView<RecyclerItem<T>>>>() {
+        var onItemClickListener: ((RecyclerItem<T>, View) -> Unit)? = null
+
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
@@ -477,7 +483,10 @@ open class BetterRecyclerView<T>(context: Context, attributeSet: AttributeSet? =
     }
 }
 
-fun <T> BetterRecyclerView<T>.configure(items: List<RecyclerItem<T>>, block: BetterRecyclerView.BetterRecyclerViewConfig<T>.() -> Unit) {
+fun <T> BetterRecyclerView<T>.configure(
+    items: List<RecyclerItem<T>>,
+    block: BetterRecyclerView.BetterRecyclerViewConfig<T>.() -> Unit
+) {
     val config = BetterRecyclerView.BetterRecyclerViewConfig(items).apply(block)
     itemsAndBuilder = config.items to config.viewBuilders
 }
